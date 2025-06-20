@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume - Prathik</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #333333, #000000);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .pdf-viewer {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            background: white;
+        }
+        
+        .loading-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .download-section {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.1));
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .download-btn {
+            background: linear-gradient(45deg, #333333, #000000);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            background: linear-gradient(45deg, #000000, #333333, #000000);
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: #f5f5f5;
+            margin: 20px;
+            border-radius: 10px;
+        }
+        
+        .error-message h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .fallback-btn {
+            background: linear-gradient(45deg, #666666, #333333);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .fallback-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Resume - Prathik</h1>
+        </div>
+        
+        <div id="pdf-container">
+            <div class="loading-message">
+                Loading resume preview...
+            </div>
+        </div>
+        
+        <div class="download-section">
+            <button class="download-btn" onclick="downloadResume()">
+                📥 Download Resume PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const githubRawUrl = 'https://raw.githubusercontent.com/Prathik0303/Resume/main/Prathik_Resume.pdf';
+        
+        function loadPDFViewer() {
+            const container = document.getElementById('pdf-container');
+            
+            // Try to embed PDF using iframe
+            const iframe = document.createElement('iframe');
+            iframe.className = 'pdf-viewer';
+            iframe.src = githubRawUrl;
+            
+            // Handle load error
+            iframe.onerror = function() {
+                showError();
+            };
+            
+            // Replace loading message with iframe
+            container.innerHTML = '';
+            container.appendChild(iframe);
+            
+            // Fallback: if PDF doesn't load in iframe after 5 seconds, show error
+            setTimeout(() => {
+                if (iframe.contentDocument === null) {
+                    showError();
+                }
+            }, 5000);
+        }
+        
+        function showError() {
+            const container = document.getElementById('pdf-container');
+            container.innerHTML = `
+                <div class="error-message">
+                    <h3>PDF Preview Not Available</h3>
+                    <p>The resume preview couldn't be loaded directly in the browser.</p>
+                    <p>Please use one of the options below to view the resume:</p>
+                    <button class="fallback-btn" onclick="openInNewTab()">🔗 Open in New Tab</button>
+                    <button class="fallback-btn" onclick="downloadResume()">📥 Download PDF</button>
+                </div>
+            `;
+        }
+        
+        function downloadResume() {
+            try {
+                // Create a temporary download link
+                const link = document.createElement('a');
+                link.href = githubRawUrl;
+                link.download = 'Prathik_Resume.pdf';
+                link.target = '_blank';
+                
+                // Append to body, click, and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                console.log('Download initiated successfully');
+            } catch (error) {
+                console.error('Download failed:', error);
+                alert('Download failed. Please check the file URL and try again.');
+            }
+        }
+        
+        function openInNewTab() {
+            window.open(githubRawUrl, '_blank');
+        }
+        
+        // Load PDF viewer when page loads
+        window.addEventListener('load', loadPDFViewer);
+    </script>
+</body>
+</html>
